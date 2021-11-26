@@ -1,3 +1,13 @@
+# \#dailybuild notice
+This is the titan2 repo for the dailybuild server.
+
+It the static binary is built in a GitHub runner and sent over to the dailybuild
+server automatically after a push in the `master` branch.
+
+dailybuild members are free to contribute.
+Note that the upstream changes will be merged into this repository.
+
+# Titan II
 A minimal Gemini server written in Go. Launch your Gemini capsule atop a Titan II rocket.
 
 I did have Titan II down to 110 lines, including whitespace, but the addition of comments, 
