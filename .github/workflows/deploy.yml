@@ -1,0 +1,47 @@
+name: Deploy titan2 to the server
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Get main branch
+        uses: actions/checkout@master
+
+      - name: Setup Go environment
+        uses: actions/setup-go@v2
+
+      - name: Create SSH config folder
+        run: mkdir -pv ~/.ssh
+
+      - name: Add Known Hosts
+        run: |
+          echo "${{ secrets.SSH_DEPLOY_HOST_KEY }}" > ~/.ssh/known_hosts
+
+      - name: Add SSH key
+        run: |
+          touch ~/.ssh/key
+          chmod 600 ~/.ssh/key
+          echo "${{ secrets.SSH_DEPLOY_RUNNER_KEY }}" > ~/.ssh/key
+
+      - name: Chnage directory into repository
+        run: cd $GITHUB_WORKSPACE
+
+      - name: Build titan2
+        run: CGO_ENABLED=0 go build -o dist/linux/titan2
+
+      - name: Stop Gemini service
+        run: ssh -i ~/.ssh/key "${{ secrets.SSH_DEPLOY_DESTINATION }}"
+          'sudo systemctl stop titan2'
+
+      - name: Copy server binary
+        run: scp -q -i ~/.ssh/key $GITHUB_WORKSPACE/dist/linux/titan2 "${{ secrets.SSH_DEPLOY_DESTINATION }}":/opt/gemini/titan2
+
+      - name: Start Gemini service
+        run: ssh -i ~/.ssh/key "${{ secrets.SSH_DEPLOY_DESTINATION }}"
+          'sudo systemctl start titan2'
