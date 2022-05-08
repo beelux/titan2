@@ -1,11 +1,12 @@
 [Unit]
-Description=titan2
+Description=A minimal Gemini server written in Go
 After=network.target
 
 [Service]
-User=lostleonardo
+User=gemini
+Group=gemini
 Type=simple
-ExecStart=/home/lostleonardo/bin/titan2 -hostname my.site -dir /home/lostleonardo/gemini -crt /home/lostleonardo/certs/crt.pem -key /home/lostleonardo/certs/key.pem -port 1965
+ExecStart=/opt/gemini/titan2 -hostname dailybuild.org -dir /opt/gemini/gemini -crt /opt/gemini/certs/crt.pem -key /opt/gemini/certs/key.pem -port 1965
 
 [Install]
-WantedBy=default.target
+WantedBy=multi-user.target
